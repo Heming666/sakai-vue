@@ -1,15 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import AppLayout from '@/layout/AppLayout.vue';
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
-            path: '/',
-            component: AppLayout,
+            path: '/dashboard',
+            component: () => import('@/layout/AppLayout.vue'),
             children: [
                 {
-                    path: '/',
+                    path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
@@ -144,7 +143,7 @@ const router = createRouter({
             ]
         },
         {
-            path: '/landing',
+            path: '/',
             name: 'landing',
             component: () => import('@/views/pages/Landing.vue')
         },
@@ -168,6 +167,11 @@ const router = createRouter({
             path: '/auth/error',
             name: 'error',
             component: () => import('@/views/pages/auth/Error.vue')
+        },
+        {
+            path: '/auth/register',
+            name: 'register',
+            component: () => import('@/views/pages/auth/Register.vue')
         }
     ]
 });

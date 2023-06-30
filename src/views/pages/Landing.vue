@@ -2,6 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import router from '@/router';
 
 const { layoutConfig } = useLayout();
 
@@ -14,6 +15,21 @@ const smoothScroll = (id) => {
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
+
+/**
+ * Go to login page
+ * @constructor
+ */
+const GoLogin = () => {
+    router.push({ name: 'login' });
+};
+
+/**
+ * Go to register page
+ */
+const GoRegister = () => {
+    router.push({ name: 'register' });
+};
 </script>
 
 <template>
@@ -48,8 +64,8 @@ const logoUrl = computed(() => {
                         </li>
                     </ul>
                     <div class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                        <Button label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></Button>
-                        <Button label="Register" class="p-button-rounded border-none ml-5 font-light text-white line-height-2 bg-blue-500"></Button>
+                        <Button label="登录" @click="GoLogin" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></Button>
+                        <Button label="注册" @click="GoRegister" class="p-button-rounded border-none ml-5 font-light text-white line-height-2 bg-blue-500"></Button>
                     </div>
                 </div>
             </div>
@@ -409,7 +425,7 @@ const logoUrl = computed(() => {
     <AppConfig simple />
 </template>
 
-<!-- <style scoped>
+<style scoped>
 #hero {
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #eeefaf 0%, #c3e3fa 100%);
     height: 700px;
@@ -454,4 +470,4 @@ const logoUrl = computed(() => {
         max-width: 100%;
     }
 }
-</style> -->
+</style>
