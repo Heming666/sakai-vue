@@ -1,10 +1,9 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import Request from '@/views/utilities/httpConfig/Request.js';
-import { ref, computed } from 'vue';
+import { HttpClient } from '@/utils/HttpClient.ts';
+import { ref, computed, onMounted } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
-import { Message } from '@/views/utilities/Message/Message';
-const msg = new Message();
+import { Message } from '@/utils/Message.ts';
 const { layoutConfig } = useLayout();
 const submitted = ref(false);
 const userName = ref('');
@@ -15,27 +14,30 @@ const validateUserNameState = ref(false);
 const validatePasswordState = ref(false);
 // 加载状态
 const loading = ref(false);
-
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+});
+
+onMounted(() => {
+    Message.Error('注册失败', '请检查用户名或密码是否正确');
 });
 
 const onSubmit = computed(() => {
     return async () => {
         submitted.value = true;
-        loading.value = true;
+        //loading.value = true;
         validatePassword();
         validateUserName();
         if (validatePasswordState.value && validateUserNameState.value && password.value === confirmPassword.value) {
-            const response = await Request.post('User/Register', {
+            const response = await HttpClient.Post('User/Register', {
                 userName: userName.value,
                 password: password.value,
                 confirmPassword: confirmPassword.value
             });
             if (response) {
-                msg.Success('注册成功', '即将跳转到登录页面');
+                Message.Success('注册成功', '即将跳转到登录页面');
             } else {
-                msg.Error('注册失败', '请检查用户名或密码是否正确');
+                Message.Error('注册失败', '请检查用户名或密码是否正确');
             }
         }
 
@@ -82,9 +84,9 @@ const validateUserName = () => {
                             :toggleMask="true"
                             class="w-full"
                             :class="{ 'p-invalid': (submitted && !password) || !validatePasswordState }"
-                            promptLabel="请输入密码" 
-                            weakLabel="简单" 
-                            mediumLabel="中等" 
+                            promptLabel="请输入密码"
+                            weakLabel="简单"
+                            mediumLabel="中等"
                             strongLabel="复杂"
                             inputClass="w-full"
                             inputStyle="padding:1rem"

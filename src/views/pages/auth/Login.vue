@@ -1,13 +1,24 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import Request from '@/views/utilities/httpConfig/Request.js';
-import { ref, computed } from 'vue';
+import { HttpClient } from '@/views/utilities/httpConfig/HttpClient.ts';
+import { ref, computed, onMounted } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import { Message } from '@/views/utilities/Message/Message';
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
+
+const httpClient = new HttpClient();
 const { layoutConfig } = useLayout();
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
+
+onMounted(() => {
+    console.log('111');
+    toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+    Message.Error('注册失败', '请检查用户名或密码是否正确');
+});
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
@@ -20,7 +31,7 @@ const onSubmit = computed(() => {
             password: password.value,
             remember: checked.value
         };
-        const response = await Request.post('/api/auth/login', data);
+        const response = await httpClient.post('/api/auth/login', data);
         if (response.status === 200) {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -32,6 +43,7 @@ const onSubmit = computed(() => {
 
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+        <Toast />
         <div class="flex flex-column align-items-center justify-content-center">
             <img :src="logoUrl" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">

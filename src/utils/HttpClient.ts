@@ -19,32 +19,33 @@ export class HttpClient {
     private static requestInterceptor() {
         // 在请求之前对请求头添加token
         this.axiosInstance.interceptors.request.use(
-            config => {
+            (config) => {
                 const token = localStorage.getItem('token');
                 if (token) {
                     config.headers.Authorization = token;
                 }
                 return config;
             },
-            error => {
+            (error) => {
+                Message.Error('请求拦截器->错误', error);
                 return Promise.reject(error);
             }
         );
     }
     // 响应拦截器
     private static responseInterceptor() {
-
         // 对返回结果进行统一处理
         this.axiosInstance.interceptors.response.use(
-            response => {
+            (response) => {
                 // 对返回结果进行统一处理
                 if (response.status === 200) {
                     return Promise.resolve(response);
                 } else {
+                    Message.Error('响应拦截器->错误', response.data);
                     return Promise.reject(response);
                 }
             },
-            error => {
+            (error) => {
                 // 对返回错误进行统一处理
                 if (error.response.status) {
                     switch (error.response.status) {
@@ -75,10 +76,10 @@ export class HttpClient {
         return new Promise((resolve, reject) => {
             this.axiosInstance
                 .get(url, { params })
-                .then(response => {
+                .then((response) => {
                     resolve(response.data);
                 })
-                .catch(error => {
+                .catch((error) => {
                     reject(error.data);
                 });
         });
@@ -88,10 +89,11 @@ export class HttpClient {
         return new Promise((resolve, reject) => {
             this.axiosInstance
                 .post(url, params)
-                .then(response => {
+                .then((response) => {
                     resolve(response.data);
                 })
-                .catch(error => {
+                .catch((error) => {
+                    Message.Error('POST->catch->错误', error.data);
                     reject(error.data);
                 });
         });
@@ -101,10 +103,10 @@ export class HttpClient {
         return new Promise((resolve, reject) => {
             this.axiosInstance
                 .put(url, params)
-                .then(response => {
+                .then((response) => {
                     resolve(response.data);
                 })
-                .catch(error => {
+                .catch((error) => {
                     reject(error.data);
                 });
         });
@@ -114,10 +116,10 @@ export class HttpClient {
         return new Promise((resolve, reject) => {
             this.axiosInstance
                 .delete(url, { params })
-                .then(response => {
+                .then((response) => {
                     resolve(response.data);
                 })
-                .catch(error => {
+                .catch((error) => {
                     reject(error.data);
                 });
         });
