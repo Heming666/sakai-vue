@@ -1,6 +1,7 @@
 // Http请求封装
 import axios, { AxiosInstance } from 'axios';
 import { Message } from './Message';
+import router from './../router/index';
 
 // 基于axios的Http请求封装,用于统一管理Http请求
 // 这个类不需要实例化就可以直接使用它里面的方法
@@ -50,21 +51,24 @@ export class HttpClient {
                 if (error.response.status) {
                     switch (error.response.status) {
                         case 401:
-                            Message.Error('错误', '登录过期，请重新登录');
-                            localStorage.removeItem('token');
+                            console.log('无权访问');
+                            router.push({ path: '/auth/access' });
                             break;
                         case 403:
-                            Message.Error('错误', '拒绝访问');
+                            console.log('token过期啦');
+                            router.push({ path: '/auth/login' });
                             break;
                         case 404:
-                            Message.Error('错误', '请求错误，未找到该资源');
+                            console.log('404啦');
+                            router.push({ path: '/pages/notfound' });
                             break;
                         case 500:
-                            Message.Error('错误', '服务端错误');
+                            console.log('500啦');
+                            router.push({ path: '/auth/error' });
                             break;
                         default:
-                            Message.Error('错误', error.response.data.message);
-                            break;
+                            Message.Error('服务器未知错误', error.response.data);
+                            return Promise.reject(error);
                     }
                     return Promise.reject(error.response);
                 }
@@ -80,23 +84,30 @@ export class HttpClient {
                     resolve(response.data);
                 })
                 .catch((error) => {
+                    Message.Error('网络错误', error.message);
                     reject(error.data);
+                    return Promise.reject(error);
                 });
         });
     }
     // Post请求
     public static Post(url: string, params?: any) {
-        return new Promise((resolve, reject) => {
-            this.axiosInstance
-                .post(url, params)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    Message.Error('POST->catch->错误', error.data);
-                    reject(error.data);
-                });
-        });
+        try {
+            return new Promise((resolve, reject) => {
+                this.axiosInstance
+                    .post(url, params)
+                    .then((response) => {
+                        resolve(response.data);
+                    })
+                    .catch((error) => {
+                        Message.Error('网络错误', error.message);
+                        reject(error.data);
+                        return Promise.reject(error);
+                    });
+            });
+        } catch (e) {
+            return false;
+        }
     }
     // Put请求
     public static Put(url: string, params?: any) {
@@ -107,7 +118,9 @@ export class HttpClient {
                     resolve(response.data);
                 })
                 .catch((error) => {
+                    Message.Error('网络错误', error.message);
                     reject(error.data);
+                    return Promise.reject(error);
                 });
         });
     }
@@ -120,7 +133,9 @@ export class HttpClient {
                     resolve(response.data);
                 })
                 .catch((error) => {
+                    Message.Error('网络错误', error.message);
                     reject(error.data);
+                    return Promise.reject(error);
                 });
         });
     }

@@ -1,4 +1,4 @@
-import { app } from '@/main';
+import { app } from '../main';
 import { ToastServiceMethods } from 'primevue/toastservice';
 
 //基于 Primevue/useToast的消息提示帮助类，用于统一管理消息提示
